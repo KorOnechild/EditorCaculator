@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Caculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./caculator.css">
+
+</head>
+
+<body>
+    <div id="container">
+        
+        <div id="form_container">
+            <h3>영상 길이를 입력하세요</h1>
+                <div id="input_time">
+                    <input id="hour" placeholder="0" value="0" maxlength="1" type="number">
+                    <span id="a">:</span>
+                    <input id="minute" placeholder="0" value="0" maxlength="2" type="number">
+                    <span id="a">:</span>
+                    <input id="second" placeholder="0" value="0" maxlength="2" type="number">
+                </div>
+                <div id="button_container">
+                    <button type="button" class="btn btn-secondary" onclick="addVideo()">영상 추가</button>
+                    <button type="button" class="btn btn-secondary" onclick="removeInput()">입력칸 비우기</button>
+                    <button type="button" class="btn btn-primary" onclick="calculate()">계산하기</button>
+                    <button type="button" class="btn btn-danger" onclick="refresh()">계산 초기화</button>
+                </div>
+        </div>
+
+        <div id="result">
+            <div>이번달 총 편집 분량은 <span id="totalMonth">0</span>분 입니다</div>
+            <div>이번달 총 편집 분량 계산 값은 <span id="totalCalMin">0</span>입니다</div>
+            <div>이번달 총 정산 금액은 <span id="totalMoney">0</span>원 입니다</div>
+        </div>
+
+        <div id="video_container">
+            <div id="title">
+                영상 목록
+            </div>
+            <div id="video_list">
+                <!-- <div id="video">
+                    <div>순위</div>
+                    <div id="time">
+                        <div>시간</div>
+                        :
+                        <div>분</div>
+                        :
+                        <div>초</div>
+                    </div>
+                    <button id="delete" type="button" class="btn btn-outline-secondary">삭제</button>
+                </div> -->
+            </div>
+        </div>
+        
+        <!-- <div>
+            <ol class="video_list"></ol>
+        </div> -->
+        
+    </div>
+
+</body>
+<script>
+    let videoList = []
+    let totalHour = 0;
+    let hourToMinute = 0;
+    let totalMinute = 0;
+    let totalSecond = 0;
+    let totalMonthMin = 0;
+    let totalCalMin = 0;
+    let totalMoney = 0;
+    let hour = document.getElementById("hour").value;
+    let minute = document.getElementById("minute").value;
+    let second = document.getElementById("second").value;
+
+
+    const addVideo = () => {
+        hour = document.getElementById("hour").value;
+        minute = document.getElementById("minute").value;
+        second = document.getElementById("second").value;
+
+        if (hour === '') {
+            hour = 0;
+        }
+
+        if (minute === '') {
+            minute = 0;
+        }
+
+        if (second === '') {
+            second = 0;
+        }
+
+        let v = new Object();
+
+        v.hour = hour;
+        v.minute = minute;
+        v.second = second;
+
+        videoList.push(v);        
+        let id = videoList.length;
+        
+        let temp_html = `
+                <div id=${id} class="video">
+                    <div id="id">${id}</div>
+                        <div id="time">
+                            <div>${hour}</div>
+                            :
+                            <div>${minute}</div>
+                            :
+                            <div>${second}</div>
+                        </div>
+                    <button id="delete" type="button" class="btn btn-outline-secondary" onclick="deleteVideo(${id})">삭제</button>
+                </div>
+        `;
+
+        // let temp_html = `
+        //     <li>${hour} : ${minute} : ${second}</li>
+        // `;
+
+        $("#video_list").append(temp_html);
+    };
+
+    const calculate = () => {
+        videoList.map((i) => {
+            totalHour = totalHour + Number(i.hour);
+            totalMinute = totalMinute + Number(i.minute);
+            totalSecond = totalSecond + Number(i.second);
+        })
+
+        console.log(totalHour, totalMinute, totalSecond);
+
+        hourToMinute = Number(totalHour) * 60;
+        console.log(hourToMinute);
+
+
+
+        totalMonthMin = (hourToMinute + totalMinute + (totalSecond / 60));
+        totalCalMin = (totalMonthMin / 10).toFixed(0);
+        totalMoney = totalCalMin * 9000;
+
+        $("#totalMonth").text(totalMonthMin);
+        $("#totalCalMin").text(totalCalMin);
+        $("#totalMoney").text(totalMoney);
+
+        totalHour = 0;
+        totalMinute = 0;
+        totalSecond = 0;
+    };
+
+    const removeInput = () => {
+        $("#hour").val(null);
+        $("#minute").val(null);
+        $("#second").val(null);
+    };
+
+    const refresh = () => {
+        totalHour = 0;
+        hourToMinute = 0;
+        totalMinute = 0;
+        totalSecond = 0;
+        totalCalMin = 0;
+        videoList = [];
+        $("#video_list").empty();
+        $("#totalMonth").text(0);
+        $("#totalMoney").text(0);
+        removeInput();
+    };
+
+    const deleteVideo = (id) => {
+        videoList.splice((id-1), 1);
+        $("#video_list").empty();
+
+        videoList.map((v, i) => {
+            console.log(v, i);
+
+            let temp_html = `
+                <div id=${i+1} class="video">
+                    <div id="id">${i+1}</div>
+                        <div id="time">
+                            <div>${v.hour}</div>
+                            :
+                            <div>${v.minute}</div>
+                            :
+                            <div>${v.second}</div>
+                        </div>
+                    <button id="delete" type="button" class="btn btn-outline-secondary" onclick="deleteVideo(${i+1})">삭제</button>
+                </div>
+            `;
+            $("#video_list").append(temp_html);
+        })
+    };
+</script>
+
+</html>
