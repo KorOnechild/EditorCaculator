@@ -5,7 +5,7 @@
     font-weight: 400;
     font-style: normal;
     font-size:large;
-    color: white;
+    color: rgb(233, 233, 233);
   }
 
 body{
@@ -88,15 +88,16 @@ body{
     display: flex;
     flex-direction: row;
     align-items: center;
+    
 }
 
 #result {
     margin-bottom: 20px;
 }
 
-#totalMonth, #totalCalMin, #totalBonus, #totalMoney {
+#totalMonth, #totalCalMin, #totalEditMoney, #totalBonus, #totalMoney {
     background-color: rgb(233, 233, 233);
-    padding: 3px;
+    padding: 2px;
     border-radius: 5px;
     color: red;
 }

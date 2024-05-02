@@ -9,6 +9,7 @@ let totalMinute = 0;
 let totalSecond = 0;
 let totalMonthMin = 0;
 let totalCalMin = 0;
+let totalEditMoney = 0;
 let totalMoney = 0;
 let totalBonus = 0;
 let second = document.getElementById("second").value;
@@ -34,11 +35,12 @@ const addVideo = () => {
                 </div>
         `;
 
-    // let temp_html = `
-    //     <li>${hour} : ${minute} : ${second}</li>
-    // `;
-
     $("#video_list").append(temp_html);
+
+    calculate();
+    
+    //계산 값 업데이트
+    removeInput();
 };
 
 const calculate = () => {
@@ -56,16 +58,19 @@ const calculate = () => {
     totalCalMin = Math.round((totalMonthMin / 10).toFixed(1)); // 이번달 편집 원본영상 총 길이(초)를 10분으로 나눈 뒤 첫째자리에서 반올림
     roundNum = (totalMonthMin % 10).toFixed(0);
 
-    totalMoney = totalCalMin * 10000;
+    totalEditMoney = totalCalMin * 10000;
+    totalMoney = totalEditMoney + totalBonus;
 
     $("#totalMonth").text(totalMonthMin);
     $("#totalCalMin").text(totalCalMin);
+    $("#totalEditMoney").text(totalEditMoney.toLocaleString('ko-KR'));
     $("#totalBonus").text(totalBonus.toLocaleString('ko-KR'));
     $("#totalMoney").text(totalMoney.toLocaleString('ko-KR'));
 
     totalHour = 0;
     totalMinute = 0;
     totalSecond = 0;
+    totalEditMoney = 0;
     totalBonus = 0;
 };
 
@@ -75,19 +80,7 @@ const removeInput = () => {
 };
 
 const refresh = () => {
-    totalHour = 0;
-    hourToMinute = 0;
-    totalMinute = 0;
-    totalSecond = 0;
-    totalCalMin = 0;
-    totalBonus = 0;
-    videoList = [];
-    $("#video_list").empty();
-    $("#totalMonth").text(0);
-    $("#totalCalMin").text(0);
-    $("#totalBonus").text(0);
-    $("#totalMoney").text(0);
-    removeInput();
+    location.reload(true);
 };
 
 const deleteVideo = (id) => {
@@ -101,11 +94,13 @@ const deleteVideo = (id) => {
                 <div id=${i + 1} class="video">
                     <div id="id">${i + 1}</div>
                         <div id="time">
-                        <span>${second} 초, 추가 금액: ${bonusMoney.toLocaleString('ko-KR')}원</span>
+                        <span>${v.second}초, 추가 금액: ${v.bonusMoney.toLocaleString('ko-KR')}원</span>
                         </div>
                     <button id="delete" type="button" class="btn btn-outline-secondary" onclick="deleteVideo(${i + 1})">삭제</button>
                 </div>
             `;
         $("#video_list").append(temp_html);
     })
+    //계산 값 업데이트
+    calculate();
 };
