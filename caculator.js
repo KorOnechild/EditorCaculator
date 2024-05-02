@@ -36,7 +36,6 @@ const addVideo = () => {
         `;
 
     $("#video_list").append(temp_html);
-
     calculate();
     
     //계산 값 업데이트
